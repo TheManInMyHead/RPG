@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>RPG</title>
+		<!--Bottom of this background: 708 px-->
+		<!--Top of this background: 76 px-->
+		<!--Left of this background: 600 px-->
+		<!--Right of this background: 1304 px-->
+		<!--Total size of this image: 541x541 (?) px-->
+		<style>
+			#head {
+				border: solid;
+				border-width: 2px;
+				text-align: center;
+			}
+			div {
+				background-color: black;
+				z-index: 0;
+				position: absolute;
+				left: 50%;
+				margin-left: -352px;
+				width: 704px;
+				height: 704px;
+			}
+			#background {
+				z-index: 1;
+				position: absolute;
+				left: 50%;
+				margin-left: -352px;
+			}
+			#foreground {
+				z-index: 3;
+				position: absolute;
+				left: 50%;	 
+				margin-left: -352px;
+			}
+			.entity {
+				z-index: 2;
+				position: absolute;
+			}
+			#player {
+				top: 172px;
+				left: 920px;
+			}
+		</style>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<!--	-->	<script type="text/javascript">
+			$(document).ready(function() {
+				$(document).keydown(function(key) {
+					var distanceLeft = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2)); 
+					switch(parseInt(key.which,10)) {
+						case 37:
+							if (distanceLeft > 608) {
+								$('#player').animate({left: "-=32px"}, 'fast');
+							}
+						break;
+					}
+				});
+			});
+		</script> <!-- -->
+		<script type="text/javascript" src="mapFuncs.js"></script>
+<!--			$(document).ready(function() {
+				var loadMap = function(background, foreground, playerX, playerY) {
+					document.getElementById("background").src = background;
+					document.getElementById("foreground").src = foreground;
+					var playerFinalX = (playerX * 32) + 608;
+					var playerFinalY = (playerY * 32) + 108;
+					document.getElementById("player").css('top', playerFinalX);
+				}
+			}); -->
+		</script>
+	</head>
+	<body>
+		<h2 id="head">RPG</h2>
+		<p style="text-align:center">Use the arrow keys (or ASDW) to move.</p>
+		<div></div>
+		<img id="background" src="1.png">
+		<img id="foreground" src="1Fore.png">
+		<img id="player" class="entity" src="Player.png">
+	</body>
+</html>
