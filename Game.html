@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>RPG</title>
+		<!--One tile ~= 1 em -->
 		<!--Bottom of this background: 708 px-->
 		<!--Top of this background: 76 px-->
 		<!--Left of this background: 600 px-->
@@ -27,31 +28,65 @@
 				position: absolute;
 				left: 50%;
 				margin-left: -352px;
+				width: 44em;
+				height: 44em;
 			}
 			#foreground {
 				z-index: 3;
 				position: absolute;
 				left: 50%;	 
 				margin-left: -352px;
+				width: 44em;
+				height: 44em;
 			}
 			.entity {
 				z-index: 2;
 				position: absolute;
 			}
 			#player {
-				top: 172px;
-				left: 920px;
+			//	top: 6.6em;
+				top: 48.65em;
+				left: 22.65em;
+				width: 2em;
+				height: 2em;
 			}
 		</style>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script type="text/javascript" src="pxem.jQuery.js"></script>
 <!--	-->	<script type="text/javascript">
 			$(document).ready(function() {
-				$(document).keydown(function(key) {
-					var distanceLeft = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2)); 
+				$(document).keyup(function(key) {
+					var distanceLeftPx = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2)); 
+					var distanceLeft = parseInt($(distanceLeftPx).toEm().substr(0, $(distanceLeftPx).toEm().length - 2));
+					var distanceTopPx = parseInt($('#player').css('top').substr(0, $("#player").css("top").length - 2));
+					var distanceTop = parseInt($(distanceTopPx).toEm().substr(0, $(distanceTopPx).toEm().length - 2));
+//					alert(distanceLeftPx + "\n" + distanceLeft);
+//					alert(distanceTopPx + "\n" + distanceTop);
 					switch(parseInt(key.which,10)) {
 						case 37:
-							if (distanceLeft > 608) {
-								$('#player').animate({left: "-=32px"}, 'fast');
+						case 65:
+							if (distanceLeft > 22.65) {
+//								alert(distanceLeftPx + "\n" + distanceLeft);
+								$('#player').animate({left: "-=2em"}, 'fast');
+							}
+						break;
+						case 39:
+						case 68:
+							if (distanceLeft < 63.5625) {
+//								alert(distanceLeftPx + "\n" + distanceLeft);
+								$('#player').animate({left: "+=2em"}, 'fast');
+							}
+						break;
+						case 38:
+						case 87:
+							if (distanceTop > 6.6) {
+								$('#player').animate({top: "-=2em"}, 'fast');
+							}
+						break;
+						case 40:
+						case 83:
+							if (distanceTop < 47.65) {
+								$('#player').animate({top: "+=2em"}, 'fast');
 							}
 						break;
 					}
