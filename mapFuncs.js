@@ -1,9 +1,9 @@
-var loadMap = function(background, backgroundWidth, backgroundHeight, foreground, foregroundWidth, foregroundHeight, playerX, playerY){
-	currentBack = document.getElementById('background');
+function loadMap(background, backgroundWidth, backgroundHeight, foreground, foregroundWidth, foregroundHeight, playerX, playerY) {
+	var currentBack = document.getElementById('background');
 	currentBack.src = "Resources/"+background;
 	currentBack.width = backgroundWidth;
 	currentBack.height = backgroundHeight;
-	currentFore = document.getElementById('foreground');
+	var currentFore = document.getElementById('foreground');
 	currentFore.src = "Resources/"+foreground;
 	currentFore.width = foregroundWidth;
 	currentFore.height = foregroundHeight;

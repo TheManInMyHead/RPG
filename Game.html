@@ -2,97 +2,140 @@
 <html>
 	<head>
 		<title>RPG</title>
-		<!--One tile ~= 1 em -->
-		<!--Bottom of this background: 708 px-->
-		<!--Top of this background: 76 px-->
-		<!--Left of this background: 600 px-->
-		<!--Right of this background: 1304 px-->
-		<!--Total size of this image: 541x541 (?) px-->
+		<!--One tile = 2 em -->
 		<style>
 			#head {
 				border: solid;
 				border-width: 2px;
 				text-align: center;
 			}
+			// Background div, for images of inside buildings
 			div {
 				background-color: black;
 				z-index: 0;
-				position: absolute;
+				// Set to relative so that all of the images are positioned relative to it
+				position: relative;
+				// Set everything neccessary to make the div centered
 				left: 50%;
-				margin-left: -352px;
-				width: 704px;
-				height: 704px;
+				margin-left: -22em;
+				width: 44em;
+				height: 44em;
+			}
+			div > * {
+				// Helps make everything position properly
+				position: absolute;
 			}
 			#background {
 				z-index: 1;
-				position: absolute;
+//				position: absolute;
 				left: 50%;
-				margin-left: -352px;
+				margin-left: -22em;
 				width: 44em;
 				height: 44em;
 			}
 			#foreground {
 				z-index: 3;
-				position: absolute;
+//				position: absolute;
 				left: 50%;	 
-				margin-left: -352px;
+				margin-left: -22em;
 				width: 44em;
 				height: 44em;
 			}
 			.entity {
 				z-index: 2;
-				position: absolute;
+//				position: absolute;
 			}
 			#player {
-			//	top: 6.6em;
-				top: 48.65em;
-				left: 22.65em;
+//				top: 6.6em;
+//				left: 22.645em;
 				width: 2em;
 				height: 2em;
 			}
 		</style>
-		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<!-- Provides all of the important things, such as movement animations -->
+		<script type="text/javascript" src="jquery-latest.js"></script>
+		<!-- Provides the tools to convert from pixels to em -->
 		<script type="text/javascript" src="pxem.jQuery.js"></script>
 <!--	-->	<script type="text/javascript">
+			// Important for when menus become a thing
+			var menuOpen = false;
+			// Important for the movement checking functions
+			var notWalkable = [];
+			// Adds objects to the game, making it to where nobody can walk there.
+			function addNotWalkable(objectBottom, objectTop, objectLeft, objectRight) {
+				notWalkable[notWalkable.length] = {bottom: objectBottom, top: objectTop, left: objectLeft, right: objectRight};
+			}
+			addNotWalkable(0.0, 44.0, 0.0, 44.0);
+			function walkUp(distanceFromTop, distanceWalked) {
+				for (var i = 0; i < notWalkable.length; i++) {
+//					alert(distanceFromTop+"\n"+notWalkable[i].bottom + "\n" + i);
+					if (distanceFromTop > notWalkable[i].bottom) {
+						continue;
+					}
+					else
+						return 1;
+				}
+				return 0;
+			}
 			$(document).ready(function() {
 				$(document).keyup(function(key) {
-					var distanceLeftPx = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2)); 
-					var distanceLeft = parseInt($(distanceLeftPx).toEm().substr(0, $(distanceLeftPx).toEm().length - 2));
-					var distanceTopPx = parseInt($('#player').css('top').substr(0, $("#player").css("top").length - 2));
-					var distanceTop = parseInt($(distanceTopPx).toEm().substr(0, $(distanceTopPx).toEm().length - 2));
-//					alert(distanceLeftPx + "\n" + distanceLeft);
-//					alert(distanceTopPx + "\n" + distanceTop);
-					switch(parseInt(key.which,10)) {
-						case 37:
-						case 65:
-							if (distanceLeft > 22.65) {
-//								alert(distanceLeftPx + "\n" + distanceLeft);
-								$('#player').animate({left: "-=2em"}, 'fast');
-							}
-						break;
-						case 39:
-						case 68:
-							if (distanceLeft < 63.5625) {
-//								alert(distanceLeftPx + "\n" + distanceLeft);
-								$('#player').animate({left: "+=2em"}, 'fast');
-							}
-						break;
-						case 38:
-						case 87:
-							if (distanceTop > 6.6) {
-								$('#player').animate({top: "-=2em"}, 'fast');
-							}
-						break;
-						case 40:
-						case 83:
-							if (distanceTop < 47.65) {
-								$('#player').animate({top: "+=2em"}, 'fast');
-							}
-						break;
+					// If menus are open, then movement is tied to menu nav
+					if (menuOpen == false) {
+						// Get the pixel distance from the side for proper movement checks
+						var distanceLeftPx = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2)); 
+//						var distanceLeft = $(distanceLeftPx).toEm();
+						// Get the scaled version of the distance
+						var distanceLeft = parseInt($(distanceLeftPx).toEm().substr(0, $(distanceLeftPx).toEm().length - 2));
+						// A bug in the em tool, giving it 0 returns NaN, so we deal with this
+						if (isNaN(distanceLeft)) {
+							distanceLeft = 0;
+						}
+						// Same for the top
+						var distanceTopPx = parseInt($('#player').css('top').substr(0, $("#player").css("top").length - 2));
+						var distanceTop = parseInt($(distanceTopPx).toEm().substr(0, $(distanceTopPx).toEm().length - 2));
+						if (isNaN(distanceTop)) {
+							distanceTop = 0;
+						}
+//						alert(distanceLeftPx + "\n" + distanceLeft);
+//						alert(distanceTopPx + "\n" + distanceTop);
+						// Checks the key code efficiently
+						switch(parseInt(key.which,10)) {
+							case 37:
+							case 65:
+								// Make sure the player isn't at the edge of the map
+								if (distanceLeft > 0) {
+//									alert(distanceLeftPx + "\n" + distanceLeft);
+									$('#player').animate({left: "-=2em"}, 'fast');
+								}
+							break;
+							case 39:
+							case 68:
+								if (distanceLeft < 42) {
+//									alert(distanceLeftPx + "\n" + distanceLeft);
+									$('#player').animate({left: "+=2em"}, 'fast');
+								}
+							break;
+							case 38:
+							case 87:
+//								if (distanceTop > 0) {
+//									$('#player').animate({top: "-=2em"}, 'fast');
+//								}
+								if (walkUp(distanceTop, 2) == 0) {
+									$('#player').animate({top: "-=2em"}, 'fast');
+								}
+							break;
+							case 40:
+							case 83:
+								if (distanceTop < 42) {
+									$('#player').animate({top: "+=2em"}, 'fast');
+								}
+							break;
+						}
 					}
 				});
 			});
 		</script> <!-- -->
+		// Stuff for doing our map changes
 		<script type="text/javascript" src="mapFuncs.js"></script>
 <!--			$(document).ready(function() {
 				var loadMap = function(background, foreground, playerX, playerY) {
@@ -108,9 +151,10 @@
 	<body>
 		<h2 id="head">RPG</h2>
 		<p style="text-align:center">Use the arrow keys (or ASDW) to move.</p>
-		<div></div>
-		<img id="background" src="Resources/1.png">
-		<img id="foreground" src="Resources/1Fore.png">
-		<img id="player" class="entity" src="Resources/Player.png">
+		<div>
+			<img id="background" src="Resources/1.png">
+			<img id="foreground" src="Resources/1Fore.png">
+			<img id="player" class="entity" src="Resources/Player.png">
+		</div>
 	</body>
 </html>
