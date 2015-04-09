@@ -62,20 +62,51 @@
 			// Important for the movement checking functions
 			var notWalkable = [];
 			// Adds objects to the game, making it to where nobody can walk there.
-			function addNotWalkable(objectBottom, objectTop, objectLeft, objectRight) {
-				notWalkable[notWalkable.length] = {bottom: objectBottom, top: objectTop, left: objectLeft, right: objectRight};
+			function addNotWalkable(objectTop, objectBottom, objectLeft, objectRight) {
+				notWalkable[notWalkable.length] = {top: objectTop, bottom: objectBottom, left: objectLeft, right: objectRight};
 			}
-			addNotWalkable(0.0, 44.0, 0.0, 44.0);
-			function walkUp(distanceFromTop, distanceWalked) {
+			function resetNotWalkable() {
+			        notWalkable = [];
+			}
+			addNotWalkable(44.0, 0.0, 44.0, 0.0);
+			function walkUp(distanceFromTop) {
 				for (var i = 0; i < notWalkable.length; i++) {
 //					alert(distanceFromTop+"\n"+notWalkable[i].bottom + "\n" + i);
-					if (distanceFromTop > notWalkable[i].bottom) {
+					if (distanceFromTop - 2 >= notWalkable[i].bottom) {
 						continue;
 					}
 					else
 						return 1;
 				}
 				return 0;
+			}
+			function walkLeft(distanceFromLeft) {
+			        for (var i = 0; i < notWalkable.length; i++) {
+			                if (distanceFromLeft - 2 >= notWalkable[i].right)
+			                        continue;
+			                else
+			                        return 1;
+			        }
+			        return 0;
+			}
+			function walkDown(distanceFromTop) {
+			        for (var i = 0; i < notWalkable.length; i++) {
+			                if (distanceFromTop + 4 <= notWalkable[i].top)
+			                        continue;
+			                else
+			                        return 1;
+			        }
+			        return 0;
+			}
+			function walkRight(distanceFromLeft) {
+			        for (i = 0; i < notWalkable.length; i++) {
+			                if (distanceFromLeft + 4 <= notWalkable[i].left)
+			                        continue;
+			                else
+			                        return 1;
+			        }
+			        return 0;
+			        
 			}
 			$(document).ready(function() {
 				$(document).keyup(function(key) {
@@ -103,30 +134,27 @@
 							case 37:
 							case 65:
 								// Make sure the player isn't at the edge of the map
-								if (distanceLeft > 0) {
+								if (walkLeft(distanceLeft) == 0) {
 //									alert(distanceLeftPx + "\n" + distanceLeft);
 									$('#player').animate({left: "-=2em"}, 'fast');
 								}
 							break;
 							case 39:
 							case 68:
-								if (distanceLeft < 42) {
+								if (walkRight(distanceLeft) == 0) {
 //									alert(distanceLeftPx + "\n" + distanceLeft);
 									$('#player').animate({left: "+=2em"}, 'fast');
 								}
 							break;
 							case 38:
 							case 87:
-//								if (distanceTop > 0) {
-//									$('#player').animate({top: "-=2em"}, 'fast');
-//								}
-								if (walkUp(distanceTop, 2) == 0) {
+								if (walkUp(distanceTop) == 0) {
 									$('#player').animate({top: "-=2em"}, 'fast');
 								}
 							break;
 							case 40:
 							case 83:
-								if (distanceTop < 42) {
+								if (walkDown(distanceTop) == 0) {
 									$('#player').animate({top: "+=2em"}, 'fast');
 								}
 							break;
@@ -137,16 +165,6 @@
 		</script> <!-- -->
 		<!-- Stuff for doing our map changes -->
 		<script type="text/javascript" src="mapFuncs.js"></script>
-<!--			$(document).ready(function() {
-				var loadMap = function(background, foreground, playerX, playerY) {
-					document.getElementById("background").src = background;
-					document.getElementById("foreground").src = foreground;
-					var playerFinalX = (playerX * 32) + 608;
-					var playerFinalY = (playerY * 32) + 108;
-					document.getElementById("player").css('top', playerFinalX);
-				}
-			}); -->
-		</script>
 	</head>
 	<body>
 		<h2 id="head">RPG</h2>
