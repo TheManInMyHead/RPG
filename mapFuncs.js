@@ -1,14 +1,16 @@
 function loadMap(background, backgroundWidth, backgroundHeight, foreground, foregroundWidth, foregroundHeight, playerX, playerY) {
-	var currentBack = document.getElementById('background');
-	currentBack.src = "Resources/"+background;
-	currentBack.width = backgroundWidth;
-	currentBack.height = backgroundHeight;
-	var currentFore = document.getElementById('foreground');
-	currentFore.src = "Resources/"+foreground;
-	currentFore.width = foregroundWidth;
-	currentFore.height = foregroundHeight;
-	var playerFinalX = $(playerX + 22.65).toPx();
-	var playerFinalY = $(playerY + 6.6).toPx();
-	$("#player").css("left", playerFinalX);
-	$("#player").css("top", playerFinalY);
+        notWalkable = [];
+	document.getElementById('background').src = "Resources/"+background;
+	$('#background').css('width', backgroundWidth * 2 + "em");
+	$('#background').css('height', backgroundHeight * 2 + "em");
+	$('#background').css('margin-left', 0-backgroundWidth + "em");
+	document.getElementById('foreground').src = "Resources/"+foreground;
+	$('#foreground').css('width', foregroundWidth * 2 + "em");
+	$('#foreground').css('height', foregroundHeight * 2 + "em");
+	$('#foreground').css('margin-left', 0-foregroundWidth + "em");
+	$('div').css("width", backgroundWidth * 2 + "em");
+	$('div').css("height", backgroundHeight * 2 + "em");
+	$('div').css("margin-left", 0-backgroundWidth + "em");
+	$("#player").css("left", playerX * 2 + "em");
+	$("#player").css("top", playerY * 2 + "em");
 }
