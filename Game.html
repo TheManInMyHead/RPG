@@ -9,25 +9,25 @@
 				border-width: 2px;
 				text-align: center;
 			}
-			// Background div, for images of inside buildings
+			/* Background div, for images of inside buildings */
 			div {
 				background-color: black;
 				z-index: 0;
-				// Set to relative so that all of the images are positioned relative to it
+				/* Set to relative so that all of the images are positioned relative  to it */
 				position: relative;
-				// Set everything neccessary to make the div centered
+				/* Set everything neccessary to make the div centered */
 				left: 50%;
 				margin-left: -22em;
 				width: 44em;
 				height: 44em;
 			}
 			div > * {
-				// Helps make everything position properly
+				/* Helps make everything position properly */
 				position: absolute;
 			}
 			#background {
 				z-index: 1;
-//				position: absolute;
+/*				position: absolute; */
 				left: 50%;
 				margin-left: -22em;
 				width: 44em;
@@ -35,19 +35,19 @@
 			}
 			#foreground {
 				z-index: 3;
-//				position: absolute;
-				left: 50%;	 
+/*				position: absolute; */
+				left: 50%;
 				margin-left: -22em;
 				width: 44em;
 				height: 44em;
 			}
 			.entity {
 				z-index: 2;
-//				position: absolute;
+/*				position: absolute; */
 			}
 			#player {
-//				top: 6.6em;
-//				left: 22.645em;
+/*				top: 6.6em; */
+/*				left: 22.645em; */
 				width: 2em;
 				height: 2em;
 			}
@@ -82,7 +82,7 @@
 					// If menus are open, then movement is tied to menu nav
 					if (menuOpen == false) {
 						// Get the pixel distance from the side for proper movement checks
-						var distanceLeftPx = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2)); 
+						var distanceLeftPx = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2));
 //						var distanceLeft = $(distanceLeftPx).toEm();
 						// Get the scaled version of the distance
 						var distanceLeft = parseInt($(distanceLeftPx).toEm().substr(0, $(distanceLeftPx).toEm().length - 2));
