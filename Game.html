@@ -17,9 +17,6 @@
 				position: relative;
 				/* Set everything neccessary to make the div centered */
 				left: 50%;
-				margin-left: -22em;
-				width: 44em;
-				height: 44em;
 			}
 			div > * {
 				/* Helps make everything position properly */
@@ -27,27 +24,14 @@
 			}
 			#background {
 				z-index: 1;
-/*				position: absolute; */
-				left: 50%;
-				margin-left: -22em;
-				width: 44em;
-				height: 44em;
 			}
 			#foreground {
 				z-index: 3;
-/*				position: absolute; */
-				left: 50%;
-				margin-left: -22em;
-				width: 44em;
-				height: 44em;
 			}
 			.entity {
 				z-index: 2;
-/*				position: absolute; */
 			}
 			#player {
-/*				top: 6.6em; */
-/*				left: 22.645em; */
 				width: 2em;
 				height: 2em;
 			}
@@ -56,122 +40,194 @@
 		<script type="text/javascript" src="jquery-latest.js"></script>
 		<!-- Provides the tools to convert from pixels to em -->
 		<script type="text/javascript" src="pxem.jQuery.js"></script>
-<!--	-->	<script type="text/javascript">
+		<script type="text/javascript">
 			// Important for when menus become a thing
 			var menuOpen = false;
-			// Important for the movement checking functions
-			var notWalkable = [];
-			// Adds objects to the game, making it to where nobody can walk there.
-			function addNotWalkable(objectTop, objectBottom, objectLeft, objectRight) {
-				notWalkable[notWalkable.length] = {top: objectTop, bottom: objectBottom, left: objectLeft, right: objectRight};
-			}
-			function resetNotWalkable() {
-			        notWalkable = [];
-			}
-			addNotWalkable(44.0, 0.0, 44.0, 0.0);
-			function walkUp(distanceFromTop) {
-				for (var i = 0; i < notWalkable.length; i++) {
-//					alert(distanceFromTop+"\n"+notWalkable[i].bottom + "\n" + i);
-					if (distanceFromTop - 2 >= notWalkable[i].bottom) {
-						continue;
+			var currentMap;
+			function Map(backgroundImage, foregroundImage, width, height, onLoadHandler) {
+				this.backgroundImage = backgroundImage;
+				this.foregroundImage = foregroundImage;
+				this.width = width*2;
+				this.height = height*2;
+				this.events = [];
+				this.notWalkable = [];
+				var object = this;
+				this.onLoadHandler = onLoadHandler;
+				this.addNotWalkable = function(x, y) {
+					object.notWalkable[object.notWalkable.length] = {
+						x: x*2,
+						y: y*2
 					}
-					else
-						return 1;
+					return 0;
 				}
-				return 0;
+				this.addEvent = function(x, y, event) {
+					object.events[object.events.length] = {
+						x: x*2,
+						y: y*2,
+						event: event
+					}
+					return 0;
+				}
+				this.load = function() {
+					var div = document.getElementsByTagName('div')[0]
+					div.innerHTML = '<img id="player" class="entity" src="Resources/Player.png">';
+					mapBack = new Image();
+					mapFore = new Image();
+					mapBack.src = "Resources/"+object.backgroundImage;
+					mapFore.src = "Resources/"+object.foregroundImage;
+					mapBack.id = "background";
+					mapFore.id = "foreground";
+					div.style.width = object.width.toString()+"em";
+					div.style.height = object.height.toString()+"em";
+					div.style.marginLeft =  (0-(object.width/2)).toString()+"em";
+					$('div').append(mapBack);
+					$('div').append(mapFore);
+					return 0;
+				}
 			}
-			function walkLeft(distanceFromLeft) {
-			        for (var i = 0; i < notWalkable.length; i++) {
-			                if (distanceFromLeft - 2 >= notWalkable[i].right)
-			                        continue;
-			                else
-			                        return 1;
-			        }
-			        return 0;
+			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
+				mapTwo.load();
+				currentMap = mapTwo;
+				mapTwo.addNotWalkable(5, 8);
+				mapTwo.addNotWalkable(5, 9);
+				mapTwo.addNotWalkable(6, 8);
+				mapTwo.addNotWalkable(6, 9);
+				mapTwo.addNotWalkable(7, 8);
+				mapTwo.addNotWalkable(7, 9);
+				mapTwo.addNotWalkable(8, 8);
+				mapTwo.addNotWalkable(8, 9);
+				mapTwo.addEvent(0, 18, function() {
+					mapTwo.onLoadHandler();
+				});
+			});
+			mapOne.addNotWalkable(10, 17);
+			mapOne.addNotWalkable(10, 18);
+			mapOne.addNotWalkable(11, 17);
+			mapOne.addNotWalkable(11, 18);
+			mapOne.addNotWalkable(12, 17);
+			mapOne.addNotWalkable(12, 18);
+			mapOne.addNotWalkable(13, 17);
+			mapOne.addNotWalkable(13, 18);
+			function mapOneWarp() {	
+				mapOne.onLoadHandler();
+				document.getElementById('player').style.left = "0em";
+				document.getElementById('player').style.top = "36em";
 			}
-			function walkDown(distanceFromTop) {
-			        for (var i = 0; i < notWalkable.length; i++) {
-			                if (distanceFromTop + 4 <= notWalkable[i].top)
-			                        continue;
-			                else
-			                        return 1;
-			        }
-			        return 0;
+			mapOne.addEvent(21, 15, mapOneWarp); 
+			currentMap = mapOne;
+			var mapTwo = new Map('2.png', '2Fore.png', 25, 25, function() {
+				mapOne.load();
+				currentMap = mapOne;
+				mapOne.addNotWalkable(10, 17);
+				mapOne.addNotWalkable(10, 18);
+				mapOne.addNotWalkable(11, 17);
+				mapOne.addNotWalkable(11, 18);
+				mapOne.addNotWalkable(12, 17);
+				mapOne.addNotWalkable(12, 18);
+				mapOne.addNotWalkable(13, 17);
+				mapOne.addNotWalkable(13, 18);
+				mapOne.addEvent(22, 15, function() {
+					mapOne.onLoadHandler();
+				});
+			});
+			function walkUp(distanceFromLeft, distanceFromTop) {
+				if (distanceFromTop - 2 < 0)
+					return;
+				for (var i = 0; i < currentMap.notWalkable.length; i++) {
+					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop - 2 == currentMap.notWalkable[i].y) 
+						return;
+				}
+				$('#player').animate({top: "-=2em"}, 'fast');
+				for (var j = 0; j < currentMap.events.length; j++) {
+					if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop - 2 == currentMap.events[j].y)
+						currentMap.events[j].event();
+				}
 			}
-			function walkRight(distanceFromLeft) {
-			        for (i = 0; i < notWalkable.length; i++) {
-			                if (distanceFromLeft + 4 <= notWalkable[i].left)
-			                        continue;
-			                else
-			                        return 1;
+			function walkLeft(distanceFromLeft, distanceFromTop) {
+				if (distanceFromLeft - 2 < 0)
+					return;
+			        for (var i = 0; i < currentMap.notWalkable.length; i++) {
+			                if (distanceFromLeft == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
+			                        return;
 			        }
-			        return 0;
-			        
+			        $('#player').animate({left: "-=2em"}, 'fast');
+				for (var j = 0; j < currentMap.events.length; j++) {
+			                if (distanceFromLeft == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+			                        currentMap.events[j].event();
+			        }
+			}
+			function walkDown(distanceFromLeft, distanceFromTop) {
+			        if (distanceFromTop + 4 > currentMap.height)
+					return;
+				for (var i = 0; i < currentMap.notWalkable.length; i++) {
+					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop + 2 == currentMap.notWalkable[i].y) 
+						return;
+				}
+				$('#player').animate({top: "+=2em"}, 'fast');
+				for (var j = 0; j < currentMap.events.length; j++) {
+					if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop + 2 == currentMap.notWalkable[j].y)
+						currentMap.events[j].event();
+				}
+			}
+			function walkRight(distanceFromLeft, distanceFromTop) {
+			        if (distanceFromLeft + 4 > currentMap.width)
+					return;
+			        for (var i = 0; i < currentMap.notWalkable.length; i++) {
+			                if (distanceFromLeft + 4 == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
+			                        return;
+			        }
+			        $('#player').animate({left: "+=2em"}, 'fast');
+			        for (var j = 0; j < currentMap.events.length; j++) {
+			                if (distanceFromLeft + 4 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+			                        currentMap.events[j].event();
+			        }
 			}
 			$(document).ready(function() {
+				currentMap.load();
 				$(document).keyup(function(key) {
 					// If menus are open, then movement is tied to menu nav
 					if (menuOpen == false) {
 						// Get the pixel distance from the side for proper movement checks
 						var distanceLeftPx = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2));
-//						var distanceLeft = $(distanceLeftPx).toEm();
 						// Get the scaled version of the distance
 						var distanceLeft = parseInt($(distanceLeftPx).toEm().substr(0, $(distanceLeftPx).toEm().length - 2));
 						// A bug in the em tool, giving it 0 returns NaN, so we deal with this
-						if (isNaN(distanceLeft)) {
+						if (isNaN(distanceLeft))
 							distanceLeft = 0;
-						}
 						// Same for the top
 						var distanceTopPx = parseInt($('#player').css('top').substr(0, $("#player").css("top").length - 2));
 						var distanceTop = parseInt($(distanceTopPx).toEm().substr(0, $(distanceTopPx).toEm().length - 2));
-						if (isNaN(distanceTop)) {
+						if (isNaN(distanceTop))
 							distanceTop = 0;
-						}
-//						alert(distanceLeftPx + "\n" + distanceLeft);
-//						alert(distanceTopPx + "\n" + distanceTop);
 						// Checks the key code efficiently
 						switch(parseInt(key.which,10)) {
 							case 37:
 							case 65:
 								// Make sure the player isn't at the edge of the map
-								if (walkLeft(distanceLeft) == 0) {
-//									alert(distanceLeftPx + "\n" + distanceLeft);
-									$('#player').animate({left: "-=2em"}, 'fast');
-								}
+								walkLeft(distanceLeft, distanceTop);
 							break;
 							case 39:
 							case 68:
-								if (walkRight(distanceLeft) == 0) {
-//									alert(distanceLeftPx + "\n" + distanceLeft);
-									$('#player').animate({left: "+=2em"}, 'fast');
-								}
+								walkRight(distanceLeft, distanceTop);
 							break;
 							case 38:
 							case 87:
-								if (walkUp(distanceTop) == 0) {
-									$('#player').animate({top: "-=2em"}, 'fast');
-								}
+								walkUp(distanceLeft,distanceTop);
 							break;
 							case 40:
 							case 83:
-								if (walkDown(distanceTop) == 0) {
-									$('#player').animate({top: "+=2em"}, 'fast');
-								}
+								walkDown(distanceLeft, distanceTop);
 							break;
 						}
 					}
 				});
 			});
-		</script> <!-- -->
-		<!-- Stuff for doing our map changes -->
-		<script type="text/javascript" src="mapFuncs.js"></script>
+		</script>
 	</head>
 	<body>
 		<h2 id="head">RPG</h2>
-		<p style="text-align:center">Use the arrow keys (or ASDW) to move.</p>
-		<div>
-			<img id="background" src="Resources/1.png">
-			<img id="foreground" src="Resources/1Fore.png">
+		<p style="text-align:center">Use the arrow keys (or WASD) to move.</p>
+		<div style="width: 44em, height: 44em, margin-left: -22em">
 			<img id="player" class="entity" src="Resources/Player.png">
 		</div>
 	</body>
