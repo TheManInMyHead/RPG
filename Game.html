@@ -13,6 +13,7 @@
 			#menu {
 			        position: absolute;
 			        width: 15em;
+				height: 30em;
 			}
 			/* Background div, for images of inside buildings */
 			#blank {
@@ -92,11 +93,23 @@
 			}
 			function Menu(title) {
 		                this.title = title;
-		                document.getElementById('menu');
 		                var object = this;
-		                this.addEntry = function(html) {
-		                        var div = document.getElementById()
+				this.entries = [];
+		                this.addEntry = function(text) {
+		                        object.entries[object.entries.length] = text;
 		                }
+				this.display = function(backgroundColor="white", borderColor="black") {
+					var div = document.getElementById('menu');
+					div.innerHTML = '<h3>'+title+'</h3>';
+					div.style.border = "solid";
+					div.style.borderWidth = "1px";
+					div.style.borderColor = borderColor;
+					for (var i = 0; i < object.entries.length; i++) {
+						div.innerHTML += "<p>"+object.entries[i]+"</p>";
+					}
+					div.style.backgroundColor = backgroundColor;
+					menuOpen = true;
+				}
 			}
 			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
 				mapOne.load();
@@ -141,6 +154,7 @@
 					document.getElementById('player').style.top = "30em";
 				});
 			});
+			var emptyMenu = new Menu("");
 			function walkUp(distanceFromLeft, distanceFromTop) {
 				if (distanceFromTop - 2 < 0)
 				        return;
