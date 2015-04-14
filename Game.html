@@ -86,36 +86,6 @@
 				}
 			}
 			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
-				mapTwo.load();
-				currentMap = mapTwo;
-				mapTwo.addNotWalkable(5, 8);
-				mapTwo.addNotWalkable(5, 9);
-				mapTwo.addNotWalkable(6, 8);
-				mapTwo.addNotWalkable(6, 9);
-				mapTwo.addNotWalkable(7, 8);
-				mapTwo.addNotWalkable(7, 9);
-				mapTwo.addNotWalkable(8, 8);
-				mapTwo.addNotWalkable(8, 9);
-				mapTwo.addEvent(0, 18, function() {
-					mapTwo.onLoadHandler();
-				});
-			});
-			mapOne.addNotWalkable(10, 17);
-			mapOne.addNotWalkable(10, 18);
-			mapOne.addNotWalkable(11, 17);
-			mapOne.addNotWalkable(11, 18);
-			mapOne.addNotWalkable(12, 17);
-			mapOne.addNotWalkable(12, 18);
-			mapOne.addNotWalkable(13, 17);
-			mapOne.addNotWalkable(13, 18);
-			function mapOneWarp() {	
-				mapOne.onLoadHandler();
-				document.getElementById('player').style.left = "0em";
-				document.getElementById('player').style.top = "36em";
-			}
-			mapOne.addEvent(21, 15, mapOneWarp); 
-			currentMap = mapOne;
-			var mapTwo = new Map('2.png', '2Fore.png', 25, 25, function() {
 				mapOne.load();
 				currentMap = mapOne;
 				mapOne.addNotWalkable(10, 17);
@@ -126,20 +96,48 @@
 				mapOne.addNotWalkable(12, 18);
 				mapOne.addNotWalkable(13, 17);
 				mapOne.addNotWalkable(13, 18);
-				mapOne.addEvent(22, 15, function() {
+				mapOne.addEvent(21, 15, function() {
+					mapTwo.onLoadHandler();
+			                document.getElementById('player').style.left = "0";
+		                        document.getElementById('player').style.top = "36em";
+				});
+			});
+			currentMap = mapOne;
+			var mapTwo = new Map('2.png', '2Fore.png', 25, 25, function() {
+				mapTwo.load();
+				currentMap = mapTwo;
+				mapTwo.addNotWalkable(6, 8);
+				mapTwo.addNotWalkable(6, 9);
+				mapTwo.addNotWalkable(7, 8);
+				mapTwo.addNotWalkable(7, 9);
+				mapTwo.addNotWalkable(8, 8);
+				mapTwo.addNotWalkable(8, 9);
+				mapTwo.addNotWalkable(9, 8);
+				mapTwo.addNotWalkable(9, 9);
+				mapTwo.addNotWalkable(19, 20);
+				mapTwo.addNotWalkable(19, 21);
+				mapTwo.addNotWalkable(20, 20);
+				mapTwo.addNotWalkable(20, 21);
+				mapTwo.addNotWalkable(21, 20);
+				mapTwo.addNotWalkable(21, 21);
+				mapTwo.addNotWalkable(22, 20);
+				mapTwo.addNotWalkable(22, 21);
+				mapTwo.addEvent(0, 18, function() {
 					mapOne.onLoadHandler();
+					document.getElementById('player').style.left = "42em";
+					document.getElementById('player').style.top = "30em";
 				});
 			});
 			function walkUp(distanceFromLeft, distanceFromTop) {
 				if (distanceFromTop - 2 < 0)
-					return;
+				        return;
 				for (var i = 0; i < currentMap.notWalkable.length; i++) {
-					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop - 2 == currentMap.notWalkable[i].y) 
+					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop - 2 == currentMap.notWalkable[i].y)
 						return;
 				}
 				$('#player').animate({top: "-=2em"}, 'fast');
 				for (var j = 0; j < currentMap.events.length; j++) {
-					if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop - 2 == currentMap.events[j].y)
+					if (distanceFromLeft == currentMap.events[j].x && distanceFromTop - 2 == currentMap.events[j].y)
 						currentMap.events[j].event();
 				}
 			}
@@ -152,7 +150,7 @@
 			        }
 			        $('#player').animate({left: "-=2em"}, 'fast');
 				for (var j = 0; j < currentMap.events.length; j++) {
-			                if (distanceFromLeft == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+			                if (distanceFromLeft - 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
 			                        currentMap.events[j].event();
 			        }
 			}
@@ -160,7 +158,7 @@
 			        if (distanceFromTop + 4 > currentMap.height)
 					return;
 				for (var i = 0; i < currentMap.notWalkable.length; i++) {
-					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop + 2 == currentMap.notWalkable[i].y) 
+					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop + 2 == currentMap.notWalkable[i].y)
 						return;
 				}
 				$('#player').animate({top: "+=2em"}, 'fast');
@@ -178,12 +176,12 @@
 			        }
 			        $('#player').animate({left: "+=2em"}, 'fast');
 			        for (var j = 0; j < currentMap.events.length; j++) {
-			                if (distanceFromLeft + 4 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+			                if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
 			                        currentMap.events[j].event();
 			        }
 			}
 			$(document).ready(function() {
-				currentMap.load();
+				currentMap.onLoadHandler();
 				$(document).keyup(function(key) {
 					// If menus are open, then movement is tied to menu nav
 					if (menuOpen == false) {
