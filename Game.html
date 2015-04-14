@@ -9,8 +9,13 @@
 				border-width: 2px;
 				text-align: center;
 			}
+			/* Background span for the menu */
+			#menu {
+			        position: absolute;
+			        width: 15em;
+			}
 			/* Background div, for images of inside buildings */
-			div {
+			#blank {
 				background-color: black;
 				z-index: 0;
 				/* Set to relative so that all of the images are positioned relative  to it */
@@ -18,7 +23,7 @@
 				/* Set everything neccessary to make the div centered */
 				left: 50%;
 			}
-			div > * {
+			#blank > * {
 				/* Helps make everything position properly */
 				position: absolute;
 			}
@@ -69,7 +74,7 @@
 					return 0;
 				}
 				this.load = function() {
-					var div = document.getElementsByTagName('div')[0]
+					var div = document.getElementById('blank');
 					div.innerHTML = '<img id="player" class="entity" src="Resources/Player.png">';
 					mapBack = new Image();
 					mapFore = new Image();
@@ -80,10 +85,18 @@
 					div.style.width = object.width.toString()+"em";
 					div.style.height = object.height.toString()+"em";
 					div.style.marginLeft =  (0-(object.width/2)).toString()+"em";
-					$('div').append(mapBack);
-					$('div').append(mapFore);
+					$('#blank').append(mapBack);
+					$('#blank').append(mapFore);
 					return 0;
 				}
+			}
+			function Menu(title) {
+		                this.title = title;
+		                document.getElementById('menu');
+		                var object = this;
+		                this.addEntry = function(html) {
+		                        var div = document.getElementById()
+		                }
 			}
 			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
 				mapOne.load();
@@ -225,7 +238,10 @@
 	<body>
 		<h2 id="head">RPG</h2>
 		<p style="text-align:center">Use the arrow keys (or WASD) to move.</p>
-		<div style="width: 44em, height: 44em, margin-left: -22em">
+		<div id="menu" style="background-color: white">
+		        
+		</div>
+		<div id="blank" style="width: 44em, height: 44em, margin-left: -22em">
 			<img id="player" class="entity" src="Resources/Player.png">
 		</div>
 	</body>
