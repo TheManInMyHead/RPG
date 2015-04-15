@@ -15,6 +15,7 @@
 			        width: 15em;
 				height: 30em;
 			}
+			
 			/* Background div, for images of inside buildings */
 			#blank {
 				background-color: black;
@@ -91,21 +92,36 @@
 					return 0;
 				}
 			}
-			function Menu(title) {
+			function Menu(title, hoverColor="gray", clickFunction) {
 		                this.title = title;
 		                var object = this;
 				this.entries = [];
+				this.hoverColor = hoverColor;
+				this.clickFunction = clickFunction;
+//				document.getElementById('menu').getElementsByTagName('p').style.
 		                this.addEntry = function(text) {
 		                        object.entries[object.entries.length] = text;
 		                }
 				this.display = function(backgroundColor="white", borderColor="black") {
 					var div = document.getElementById('menu');
-					div.innerHTML = '<h3>'+title+'</h3>';
+					div.innerHTML = '<h3 style="text-align:center;">'+title+'</h3>';
+					div.getElementsByTagName('h3')[0].style.border = "solid";
+					div.getElementsByTagName('h3')[0].style.borderTop = "0px";
+					div.getElementsByTagName('h3')[0].style.borderRight = "0px";
+					div.getElementsByTagName('h3')[0].style.borderLeft = "0px";
+//					document.createElement('style').styleSheet.cssText += '#entry:hover {background-color: '+object.hoverColor+'}';
+					if (document.getElementsByTagName('head')[0].lastChild.id == "styleSheet")
+						styleSheet.childNodes[0].nodeValue = '#entry:hover {background-color: '+object.hoverColor+'}';
+					else {
+						styleSheet = document.createElement('style');
+						styleSheet.appendChild(document.createTextNode('#entry:hover {background-color: '+object.hoverColor+'}'));
+						document.getElementsByTagName('head')[0].appendChild(styleSheet);
+					}
 					div.style.border = "solid";
 					div.style.borderWidth = "1px";
 					div.style.borderColor = borderColor;
 					for (var i = 0; i < object.entries.length; i++) {
-						div.innerHTML += "<p>"+object.entries[i]+"</p>";
+						div.innerHTML += "<p id='entry'>"+object.entries[i]+"</p>";
 					}
 					div.style.backgroundColor = backgroundColor;
 					menuOpen = true;
