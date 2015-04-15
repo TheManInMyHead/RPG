@@ -51,6 +51,7 @@
 			// Important for when menus become a thing
 			var menuOpen = false;
 			var currentMap;
+			var currentMenu;
 			function Map(backgroundImage, foregroundImage, width, height, onLoadHandler) {
 				this.backgroundImage = backgroundImage;
 				this.foregroundImage = foregroundImage;
@@ -98,7 +99,6 @@
 				this.entries = [];
 				this.hoverColor = hoverColor;
 				this.clickFunction = clickFunction;
-//				document.getElementById('menu').getElementsByTagName('p').style.
 		                this.addEntry = function(text) {
 		                        object.entries[object.entries.length] = text;
 		                }
@@ -115,7 +115,6 @@
 					div.getElementsByTagName('h3')[0].style.borderTop = "0px";
 					div.getElementsByTagName('h3')[0].style.borderRight = "0px";
 					div.getElementsByTagName('h3')[0].style.borderLeft = "0px";
-//					document.createElement('style').styleSheet.cssText += '#entry:hover {background-color: '+object.hoverColor+'}';
 					if (document.getElementsByTagName('head')[0].lastChild.id == "styleSheet")
 						styleSheet.childNodes[0].nodeValue = '#entry:hover {background-color: '+object.hoverColor+'}';
 					else {
@@ -230,10 +229,13 @@
 			                        currentMap.events[j].event();
 			        }
 			}
+			$(document).on("click", "#entry", function() {
+				currentMenu.clickFunction();
+			});
 			$(document).ready(function() {
 				currentMap.onLoadHandler();
 				$(document).keyup(function(key) {
-					// If menus are open, then movement is tied to menu nav
+					// If menus are open, then movement is locked
 					if (menuOpen == false) {
 						// Get the pixel distance from the side for proper movement checks
 						var distanceLeftPx = parseInt($('#player').css('left').substr(0, $("#player").css("left").length - 2));
@@ -251,7 +253,6 @@
 						switch(parseInt(key.which,10)) {
 							case 37:
 							case 65:
-								// Make sure the player isn't at the edge of the map
 								walkLeft(distanceLeft, distanceTop);
 							break;
 							case 39:
@@ -276,7 +277,6 @@
 		<h2 id="head">RPG</h2>
 		<p style="text-align:center">Use the arrow keys (or WASD) to move.</p>
 		<div id="menu" style="background-color: white">
-		        
 		</div>
 		<div id="blank" style="width: 44em, height: 44em, margin-left: -22em">
 			<img id="player" class="entity" src="Resources/Player.png">
