@@ -92,7 +92,7 @@
 					return 0;
 				}
 			}
-			function Menu(title, hoverColor="gray", clickFunction) {
+			function Menu(title, hoverColor, clickFunction) {
 		                this.title = title;
 		                var object = this;
 				this.entries = [];
@@ -102,7 +102,13 @@
 		                this.addEntry = function(text) {
 		                        object.entries[object.entries.length] = text;
 		                }
-				this.display = function(backgroundColor="white", borderColor="black") {
+		                this.display = function() {
+		                        object.display("white", "black");
+		                }
+		                this.display = function(backgroundColor) {
+		                        object.display(backgroundColor, "black");
+		                }
+				this.display = function(backgroundColor, borderColor) {
 					var div = document.getElementById('menu');
 					div.innerHTML = '<h3 style="text-align:center;">'+title+'</h3>';
 					div.getElementsByTagName('h3')[0].style.border = "solid";
@@ -125,6 +131,7 @@
 					}
 					div.style.backgroundColor = backgroundColor;
 					menuOpen = true;
+					currentMenu = object;
 				}
 			}
 			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
