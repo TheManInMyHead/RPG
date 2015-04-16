@@ -116,17 +116,18 @@
 					div.getElementsByTagName('h3')[0].style.borderRight = "0px";
 					div.getElementsByTagName('h3')[0].style.borderLeft = "0px";
 					if (document.getElementsByTagName('head')[0].lastChild.id == "styleSheet")
-						styleSheet.childNodes[0].nodeValue = '#entry:hover {background-color: '+object.hoverColor+'}';
+						styleSheet.childNodes[0].nodeValue = '.entry:hover {background-color: '+object.hoverColor+'}';
 					else {
 						styleSheet = document.createElement('style');
-						styleSheet.appendChild(document.createTextNode('#entry:hover {background-color: '+object.hoverColor+'}'));
+						styleSheet.appendChild(document.createTextNode('.entry:hover {background-color: '+object.hoverColor+'}'));
 						document.getElementsByTagName('head')[0].appendChild(styleSheet);
+						styleSheet.id = "styleSheet";
 					}
 					div.style.border = "solid";
 					div.style.borderWidth = "1px";
 					div.style.borderColor = borderColor;
 					for (var i = 0; i < object.entries.length; i++) {
-						div.innerHTML += "<p id='entry'>"+object.entries[i]+"</p>";
+						div.innerHTML += "<p class='entry'>"+object.entries[i]+"</p>";
 					}
 					div.style.backgroundColor = backgroundColor;
 					menuOpen = true;
@@ -176,7 +177,14 @@
 					document.getElementById('player').style.top = "30em";
 				});
 			});
-			var emptyMenu = new Menu("");
+			var menuOne = new Menu("Test", "blue", function(){
+			        menuTwo = new Menu("Test 2", "blue", function() {
+			                menuOne.display("red");
+			        });
+			        menuTwo.addEntry("Test 2 Entry");
+			        menuTwo.display("red");
+			});
+			var emptyMenu = new Menu("", "", function(){});
 			function walkUp(distanceFromLeft, distanceFromTop) {
 				if (distanceFromTop - 2 < 0)
 				        return;
@@ -229,7 +237,7 @@
 			                        currentMap.events[j].event();
 			        }
 			}
-			$(document).on("click", "#entry", function() {
+			$(document).on("click", ".entry", function() {
 				currentMenu.clickFunction();
 			});
 			$(document).ready(function() {
