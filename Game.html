@@ -48,7 +48,6 @@
 		<!-- Provides the tools to convert from pixels to em -->
 		<script type="text/javascript" src="pxem.jQuery.js"></script>
 		<script type="text/javascript">
-			// Important for when menus become a thing
 			var menuOpen = false;
 			var currentMap;
 			var currentMenu;
@@ -94,23 +93,23 @@
 				}
 			}
 			function Menu(title, hoverColor, clickFunction) {
-		                this.title = title;
-		                var object = this;
+        this.title = title;
+        var object = this;
 				this.entries = [];
 				this.hoverColor = hoverColor;
 				this.clickFunction = clickFunction;
-		                this.addEntry = function(text) {
-		                        object.addEntry(text, "");
-		                }
-		                this.addEntry = function(text, id) {
-		                        object.entries[object.entries.length] = {text: text, id: id};
-		                }
-		                this.display = function() {
-		                        object.display("white", "black");
-		                }
-		                this.display = function(backgroundColor) {
-		                        object.display(backgroundColor, "black");
-		                }
+        this.addEntry = function(text) {
+          object.addEntry(text, "");
+        }
+        this.addEntry = function(text, id) {
+          object.entries[object.entries.length] = {text: text, id: id};
+        }
+        this.display = function() {
+          object.display("white", "black");
+        }
+        this.display = function(backgroundColor) {
+          object.display(backgroundColor, "black");
+        }
 				this.display = function(backgroundColor, borderColor) {
 					var div = document.getElementById('menu');
 					div.innerHTML = '<h3 style="text-align:center;">'+title+'</h3>';
@@ -150,8 +149,8 @@
 				mapOne.addNotWalkable(13, 18);
 				mapOne.addEvent(21, 15, function() {
 					mapTwo.onLoadHandler();
-			                document.getElementById('player').style.left = "0";
-		                        document.getElementById('player').style.top = "36em";
+          document.getElementById('player').style.left = "0";
+          document.getElementById('player').style.top = "36em";
 				});
 			});
 			currentMap = mapOne;
@@ -180,18 +179,29 @@
 					document.getElementById('player').style.top = "30em";
 				});
 			});
-			var menuOne = new Menu("Test", "blue", function(entryId){
-			        menuTwo = new Menu("Test 2", "blue", function(entryId) {
-			                menuOne.display("red");
-			        });
-			        menuTwo.addEntry("Test 2 Entry");
-			        menuTwo.addEntry(entryId);
-			        menuTwo.display("red");
+			var saveMenu = new Menu("Save?", "gray", function(eventid) {
+			  mainMenu.display();
 			});
-			var emptyMenu = new Menu("", "", function(){});
+			saveMenu.addEntry("Yes", "entryYes");
+			saveMenu.addEntry("No", "entryNo");
+			var invMenu = new Menu("Inventory", "gray", function(eventId) {
+        if (eventId == "entryBack") {
+            mainMenu.display();
+        }
+			});
+			invMenu.addEntry("Back", "entryBack");
+      var mainMenu = new Menu("Main", "gray", function(eventId) {
+        if ( eventId == "entryInventory" )
+          invMenu.display();
+        if (eventId == "entrySave")
+          saveMenu.display();
+      });
+      mainMenu.addEntry("Inventory", "entryInventory");
+      mainMenu.addEntry("Save", "entrySave");
+			var emptyMenu = new Menu("", "", function(eventId){});
 			function walkUp(distanceFromLeft, distanceFromTop) {
 				if (distanceFromTop - 2 < 0)
-				        return;
+          return;
 				for (var i = 0; i < currentMap.notWalkable.length; i++) {
 					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop - 2 == currentMap.notWalkable[i].y)
 						return;
@@ -205,18 +215,18 @@
 			function walkLeft(distanceFromLeft, distanceFromTop) {
 				if (distanceFromLeft - 2 < 0)
 					return;
-			        for (var i = 0; i < currentMap.notWalkable.length; i++) {
-			                if (distanceFromLeft == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
-			                        return;
-			        }
-			        $('#player').animate({left: "-=2em"}, 'fast');
+        for (var i = 0; i < currentMap.notWalkable.length; i++) {
+          if (distanceFromLeft == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
+            return;
+        }
+        $('#player').animate({left: "-=2em"}, 'fast');
 				for (var j = 0; j < currentMap.events.length; j++) {
-			                if (distanceFromLeft - 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
-			                        currentMap.events[j].event();
-			        }
+          if (distanceFromLeft - 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+            currentMap.events[j].event();
+        }
 			}
 			function walkDown(distanceFromLeft, distanceFromTop) {
-			        if (distanceFromTop + 4 > currentMap.height)
+        if (distanceFromTop + 4 > currentMap.height)
 					return;
 				for (var i = 0; i < currentMap.notWalkable.length; i++) {
 					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop + 2 == currentMap.notWalkable[i].y)
@@ -229,17 +239,17 @@
 				}
 			}
 			function walkRight(distanceFromLeft, distanceFromTop) {
-			        if (distanceFromLeft + 4 > currentMap.width)
-					return;
-			        for (var i = 0; i < currentMap.notWalkable.length; i++) {
-			                if (distanceFromLeft + 4 == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
-			                        return;
-			        }
-			        $('#player').animate({left: "+=2em"}, 'fast');
-			        for (var j = 0; j < currentMap.events.length; j++) {
-			                if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
-			                        currentMap.events[j].event();
-			        }
+          if (distanceFromLeft + 4 > currentMap.width)
+            return;
+          for (var i = 0; i < currentMap.notWalkable.length; i++) {
+            if (distanceFromLeft + 4 == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
+              return;
+            }
+          $('#player').animate({left: "+=2em"}, 'fast');
+          for (var j = 0; j < currentMap.events.length; j++) {
+            if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+              currentMap.events[j].event();
+          }
 			}
 			$(document).on("click", ".entry", function(event) {
 				currentMenu.clickFunction(event.target.id);
@@ -292,6 +302,6 @@
 		</div>
 		<div id="blank" style="width: 44em, height: 44em, margin-left: -22em">
 			<img id="player" class="entity" src="Resources/Player.png">
-		</div>
+    </div>
 	</body>
 </html>
