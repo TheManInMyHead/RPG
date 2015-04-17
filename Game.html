@@ -100,7 +100,10 @@
 				this.hoverColor = hoverColor;
 				this.clickFunction = clickFunction;
 		                this.addEntry = function(text) {
-		                        object.entries[object.entries.length] = text;
+		                        object.addEntry(text, "");
+		                }
+		                this.addEntry = function(text, id) {
+		                        object.entries[object.entries.length] = {text: text, id: id};
 		                }
 		                this.display = function() {
 		                        object.display("white", "black");
@@ -127,7 +130,7 @@
 					div.style.borderWidth = "1px";
 					div.style.borderColor = borderColor;
 					for (var i = 0; i < object.entries.length; i++) {
-						div.innerHTML += "<p class='entry'>"+object.entries[i]+"</p>";
+						div.innerHTML += "<p class='entry' id='"+object.entries[i].id+"'>"+object.entries[i].text+"</p>";
 					}
 					div.style.backgroundColor = backgroundColor;
 					menuOpen = true;
@@ -177,11 +180,12 @@
 					document.getElementById('player').style.top = "30em";
 				});
 			});
-			var menuOne = new Menu("Test", "blue", function(){
-			        menuTwo = new Menu("Test 2", "blue", function() {
+			var menuOne = new Menu("Test", "blue", function(entryId){
+			        menuTwo = new Menu("Test 2", "blue", function(entryId) {
 			                menuOne.display("red");
 			        });
 			        menuTwo.addEntry("Test 2 Entry");
+			        menuTwo.addEntry(entryId);
 			        menuTwo.display("red");
 			});
 			var emptyMenu = new Menu("", "", function(){});
@@ -237,8 +241,8 @@
 			                        currentMap.events[j].event();
 			        }
 			}
-			$(document).on("click", ".entry", function() {
-				currentMenu.clickFunction();
+			$(document).on("click", ".entry", function(event) {
+				currentMenu.clickFunction(event.target.id);
 			});
 			$(document).ready(function() {
 				currentMap.onLoadHandler();
