@@ -11,11 +11,10 @@
 			}
 			/* Background span for the menu */
 			#menu {
-			        position: absolute;
-			        width: 15em;
+				position: absolute;
+				width: 15em;
 				height: 30em;
 			}
-			
 			/* Background div, for images of inside buildings */
 			#blank {
 				background-color: black;
@@ -136,6 +135,54 @@
 					currentMenu = object;
 				}
 			}
+			function Inventory(name, maximumItems, maximumStack) {
+				this.invName = name;
+				this.space = maximumItems;
+				this.stack = maximumStack;
+				this.totalItems = 0;
+				this.items = new Array();
+				var object = this;
+				this.addItem = function(itemName, amount, item) {
+					if ( amount > object.stack ) {
+						alert("Error: Inventory \""+object.invName+"\" cannot hold "+amount+" "+itemName+"'s!");
+						return 1;
+					}
+					if ( object.totalItems < object.space ) {
+						for ( var i = 0; i < object.items.length; i++ ) {
+							if ( object.items[i].itemName == itemName ) {
+								if ( object.totalItems + amount <= object.maximumStack) {
+									object.items[i].amount += amount;
+									return 1;
+								} else {
+									alert("Error: Inventory \""+object.invName+"\" has the maximum amount of the item \""+object.items[i].itemName+"\"!");
+									return 1;
+								}
+							}
+						}
+						var index = object.items.length;    
+						object.items[index] = item;
+						object.items[index].itemName = itemName;
+						object.items[index].amount = amount;
+						object.totalItems += 1;
+					} else
+						alert("Error: Inventory \""+object.invName+"\" has the maximum amount of different items!");
+				}
+				this.useItem = function(itemName, amount) {
+					for ( var i = 0; i < object.items.length; i++ ) {
+						if ( object.items[i].itemName == itemName ) {
+							if ( object.items[i].amount - amount >= 0 ) {
+								object.items[i].amount -= amount;
+								return;
+							} else {
+								alert("Error: Inventory \""+object.invName+"\" doesn't have enough of the item \""+object.items[i].itemName+"\"!");
+								return;
+							}
+						} else {
+							alert("Error: Inventory \""+object.invName+"\" doesn't have any of the item \""+object.items[i].itemName+"\"!");
+						}
+					}
+				}
+			}
 			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
 				mapOne.load();
 				currentMap = mapOne;
@@ -179,6 +226,7 @@
 					document.getElementById('player').style.top = "30em";
 				});
 			});
+			var inv = new Inventory("Inventory (Player)", 10, 25);
 			var saveMenu = new Menu("Save?", "gray", function(eventid) {
 			  mainMenu.display();
 			});
