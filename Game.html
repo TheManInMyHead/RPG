@@ -11,11 +11,10 @@
 			}
 			/* Background span for the menu */
 			#menu {
-			        position: absolute;
-			        width: 15em;
+				position: absolute;
+				width: 15em;
 				height: 30em;
 			}
-			
 			/* Background div, for images of inside buildings */
 			#blank {
 				background-color: black;
@@ -93,23 +92,23 @@
 				}
 			}
 			function Menu(title, hoverColor, clickFunction) {
-        this.title = title;
-        var object = this;
+				this.title = title;
+				var object = this;
 				this.entries = [];
 				this.hoverColor = hoverColor;
 				this.clickFunction = clickFunction;
-        this.addEntry = function(text) {
-          object.addEntry(text, "");
-        }
-        this.addEntry = function(text, id) {
-          object.entries[object.entries.length] = {text: text, id: id};
-        }
-        this.display = function() {
-          object.display("white", "black");
-        }
-        this.display = function(backgroundColor) {
-          object.display(backgroundColor, "black");
-        }
+				this.addEntry = function(text) {
+					object.addEntry(text, "");
+				}
+				this.addEntry = function(text, id) {
+					object.entries[object.entries.length] = {text: text, id: id};
+				}
+				this.display = function() {
+					object.display("white", "black");
+				}
+				this.display = function(backgroundColor) {
+					object.display(backgroundColor, "black");
+				}
 				this.display = function(backgroundColor, borderColor) {
 					var div = document.getElementById('menu');
 					div.innerHTML = '<h3 style="text-align:center;">'+title+'</h3>';
@@ -117,6 +116,7 @@
 					div.getElementsByTagName('h3')[0].style.borderTop = "0px";
 					div.getElementsByTagName('h3')[0].style.borderRight = "0px";
 					div.getElementsByTagName('h3')[0].style.borderLeft = "0px";
+					div.getElementsByTagName('h3')[0].style.borderColor = borderColor;
 					if (document.getElementsByTagName('head')[0].lastChild.id == "styleSheet")
 						styleSheet.childNodes[0].nodeValue = '.entry:hover {background-color: '+object.hoverColor+'}';
 					else {
@@ -136,6 +136,54 @@
 					currentMenu = object;
 				}
 			}
+			function Inventory(name, maximumItems, maximumStack) {
+				this.invName = name;
+				this.space = maximumItems;
+				this.stack = maximumStack;
+				this.totalItems = 0;
+				this.items = new Array();
+				var object = this;
+				this.addItem = function(itemName, amount, item) {
+					if ( amount > object.stack ) {
+						alert("Error: Inventory \""+object.invName+"\" cannot hold "+amount+" "+itemName+"'s!");
+						return 1;
+					}
+					if ( object.totalItems < object.space ) {
+						for ( var i = 0; i < object.items.length; i++ ) {
+							if ( object.items[i].itemName == itemName ) {
+								if ( object.totalItems + amount <= object.maximumStack) {
+									object.items[i].amount += amount;
+									return 1;
+								} else {
+									alert("Error: Inventory \""+object.invName+"\" has the maximum amount of the item \""+object.items[i].itemName+"\"!");
+									return 1;
+								}
+							}
+						}
+						var index = object.items.length;    
+						object.items[index] = item;
+						object.items[index].itemName = itemName;
+						object.items[index].amount = amount;
+						object.totalItems += 1;
+					} else
+						alert("Error: Inventory \""+object.invName+"\" has the maximum amount of different items!");
+				}
+				this.useItem = function(itemName, amount) {
+					for ( var i = 0; i < object.items.length; i++ ) {
+						if ( object.items[i].itemName == itemName ) {
+							if ( object.items[i].amount - amount >= 0 ) {
+								object.items[i].amount -= amount;
+								return;
+							} else {
+								alert("Error: Inventory \""+object.invName+"\" doesn't have enough of the item \""+object.items[i].itemName+"\"!");
+								return;
+							}
+						} else {
+							alert("Error: Inventory \""+object.invName+"\" doesn't have any of the item \""+object.items[i].itemName+"\"!");
+						}
+					}
+				}
+			}
 			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
 				mapOne.load();
 				currentMap = mapOne;
@@ -149,8 +197,8 @@
 				mapOne.addNotWalkable(13, 18);
 				mapOne.addEvent(21, 15, function() {
 					mapTwo.onLoadHandler();
-          document.getElementById('player').style.left = "0";
-          document.getElementById('player').style.top = "36em";
+					document.getElementById('player').style.left = "0";
+					document.getElementById('player').style.top = "36em";
 				});
 			});
 			currentMap = mapOne;
@@ -179,29 +227,35 @@
 					document.getElementById('player').style.top = "30em";
 				});
 			});
+			var inv = new Inventory("Inventory (Player)", 10, 25);
 			var saveMenu = new Menu("Save?", "gray", function(eventid) {
 			  mainMenu.display();
 			});
 			saveMenu.addEntry("Yes", "entryYes");
 			saveMenu.addEntry("No", "entryNo");
 			var invMenu = new Menu("Inventory", "gray", function(eventId) {
-        if (eventId == "entryBack") {
-            mainMenu.display();
-        }
+				if (eventId == "entryBack") {
+					mainMenu.display();
+				}
 			});
 			invMenu.addEntry("Back", "entryBack");
-      var mainMenu = new Menu("Main", "gray", function(eventId) {
-        if ( eventId == "entryInventory" )
-          invMenu.display();
-        if (eventId == "entrySave")
-          saveMenu.display();
-      });
-      mainMenu.addEntry("Inventory", "entryInventory");
-      mainMenu.addEntry("Save", "entrySave");
+				var mainMenu = new Menu("Main", "gray", function(eventId) {
+				if ( eventId == "entryInventory" )
+					invMenu.display();
+				if (eventId == "entrySave")
+					saveMenu.display();
+				if (eventId == "entryExit") {
+					emptyMenu.display("white", "white");
+					menuOpen = false;
+				}
+			});
+			mainMenu.addEntry("Inventory", "entryInventory");
+			mainMenu.addEntry("Save", "entrySave");
+			mainMenu.addEntry("Exit", "entryExit");
 			var emptyMenu = new Menu("", "", function(eventId){});
 			function walkUp(distanceFromLeft, distanceFromTop) {
 				if (distanceFromTop - 2 < 0)
-          return;
+					return;
 				for (var i = 0; i < currentMap.notWalkable.length; i++) {
 					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop - 2 == currentMap.notWalkable[i].y)
 						return;
@@ -215,18 +269,18 @@
 			function walkLeft(distanceFromLeft, distanceFromTop) {
 				if (distanceFromLeft - 2 < 0)
 					return;
-        for (var i = 0; i < currentMap.notWalkable.length; i++) {
-          if (distanceFromLeft == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
-            return;
-        }
-        $('#player').animate({left: "-=2em"}, 'fast');
+				for (var i = 0; i < currentMap.notWalkable.length; i++) {
+					if (distanceFromLeft == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
+						return;
+				}
+				$('#player').animate({left: "-=2em"}, 'fast');
 				for (var j = 0; j < currentMap.events.length; j++) {
-          if (distanceFromLeft - 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
-            currentMap.events[j].event();
-        }
+					if (distanceFromLeft - 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+						currentMap.events[j].event();
+				}
 			}
 			function walkDown(distanceFromLeft, distanceFromTop) {
-        if (distanceFromTop + 4 > currentMap.height)
+				if (distanceFromTop + 4 > currentMap.height)
 					return;
 				for (var i = 0; i < currentMap.notWalkable.length; i++) {
 					if (distanceFromLeft + 2 == currentMap.notWalkable[i].x && distanceFromTop + 2 == currentMap.notWalkable[i].y)
@@ -239,17 +293,17 @@
 				}
 			}
 			function walkRight(distanceFromLeft, distanceFromTop) {
-          if (distanceFromLeft + 4 > currentMap.width)
-            return;
-          for (var i = 0; i < currentMap.notWalkable.length; i++) {
-            if (distanceFromLeft + 4 == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
-              return;
-            }
-          $('#player').animate({left: "+=2em"}, 'fast');
-          for (var j = 0; j < currentMap.events.length; j++) {
-            if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
-              currentMap.events[j].event();
-          }
+				if (distanceFromLeft + 4 > currentMap.width)
+					return;
+				for (var i = 0; i < currentMap.notWalkable.length; i++) {
+				if (distanceFromLeft + 4 == currentMap.notWalkable[i].x && distanceFromTop == currentMap.notWalkable[i].y)
+					return;
+ 				}
+				$('#player').animate({left: "+=2em"}, 'fast');
+				for (var j = 0; j < currentMap.events.length; j++) {
+					if (distanceFromLeft + 2 == currentMap.events[j].x && distanceFromTop == currentMap.events[j].y)
+						currentMap.events[j].event();
+				}
 			}
 			$(document).on("click", ".entry", function(event) {
 				currentMenu.clickFunction(event.target.id);
@@ -291,6 +345,16 @@
 							break;
 						}
 					}
+					switch(parseInt(key.which,10)) {
+						case 77:
+							mainMenu.display();
+						break;
+						case 27:
+							if ( menuOpen == true ) {
+								emptyMenu.display("white", "white");
+								menuOpen = false;
+							}
+					}
 				});
 			});
 		</script>
@@ -302,6 +366,6 @@
 		</div>
 		<div id="blank" style="width: 44em, height: 44em, margin-left: -22em">
 			<img id="player" class="entity" src="Resources/Player.png">
-    </div>
+		</div>
 	</body>
 </html>
