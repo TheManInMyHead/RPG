@@ -116,6 +116,7 @@
 					div.getElementsByTagName('h3')[0].style.borderTop = "0px";
 					div.getElementsByTagName('h3')[0].style.borderRight = "0px";
 					div.getElementsByTagName('h3')[0].style.borderLeft = "0px";
+					div.getElementsByTagName('h3')[0].style.borderColor = borderColor;
 					if (document.getElementsByTagName('head')[0].lastChild.id == "styleSheet")
 						styleSheet.childNodes[0].nodeValue = '.entry:hover {background-color: '+object.hoverColor+'}';
 					else {
@@ -144,7 +145,7 @@
 				var object = this;
 				this.addItem = function(itemName, amount, item) {
 					if ( amount > object.stack ) {
-						alert("Error: Inventory \""+object.invName+"\" cannot hold "+amount+" "+itemName+"'s!");
+						alert("Error: Inventory \""+object.invName+"\" cannot hold "+amount+" "+itemName+"s!");
 						return 1;
 					}
 					if ( object.totalItems < object.space ) {
@@ -243,9 +244,15 @@
 					invMenu.display();
 				if (eventId == "entrySave")
 					saveMenu.display();
+				if (eventId == "entryExit") {
+					emptyMenu.display("white", "white");
+					menuOpen = false;
+					currentMenu = null;
+				}
 			});
 			mainMenu.addEntry("Inventory", "entryInventory");
 			mainMenu.addEntry("Save", "entrySave");
+			mainMenu.addEntry("Exit", "entryExit");
 			var emptyMenu = new Menu("", "", function(eventId){});
 			function walkUp(distanceFromLeft, distanceFromTop) {
 				if (distanceFromTop - 2 < 0)
@@ -338,6 +345,15 @@
 								walkDown(distanceLeft, distanceTop);
 							break;
 						}
+					}
+					switch(parseInt(key.which, 10)) {
+						case 77:
+							mainMenu.display();
+						break;
+						case 27:
+							emptyMenu.display("white", "white");
+							menuOpen = false;
+						break;
 					}
 				});
 			});
