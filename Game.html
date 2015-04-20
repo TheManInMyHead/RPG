@@ -45,8 +45,6 @@
 			}
 			.entity {
 				z-index: 2;
-			}
-			#player {
 				width: 2em;
 				height: 2em;
 			}
@@ -61,30 +59,57 @@
 			var currentMenu;
 			var currentInv;
 			var player;
-			function Entity(baseHealth, baseMana, baseStamina, entityName) {
+			function Entity(baseHealth, baseMana, baseStamina, baseAttack, baseDefence, baseMagic, baseResist, entityName, image) {
 				this.baseHealth = baseHealth;
 				this.currentHealth = baseHealth;
 				this.baseMana = baseMana;
 				this.currentMana = baseMana;
 				this.baseStamina = baseStamina;
 				this.currentStamina = baseStamina;
+				this.baseAttack = baseAttack;
+				this.baseDefence = baseDefence;
+				this.baseMagic = baseMagic;
+				this.baseResist = baseResist;
 				this.entityName = entityName;
+				this.entityImage = image;
 				var object = this;
 				this.increaseBase = function(stat, amount) {
-					if ( stat == "health" ) {
+					switch(stat) {
+					case "health":
 						object.baseHealth += amount;
 						object.currentHealth += amount;
 						object.updateStats();
-					} else if ( stat == "mana" ) {
+					break;
+					case "mana":
 						object.baseMana += amount;
 						object.currentMana += amount;
 						object.updateStats();
-					} else if ( stat == "stamina" ) {
+					break;
+					case "stamina":
 						object.baseStamina += amount;
 						object.currentStamina += amount;
 						object.updateStats();
-					} else
-						alert("Error: Unknown stat \""+stat+".\" Please report this error by emailing adventure.awaits@giz-works.com with \"increaseBase error\" in the subject line.");
+					break;
+					case "attack":
+						object.baseAttack += amount;
+						object.updateStats();
+					break;
+					case "defence":
+						object.baseDefence += amount;
+						object.updateStats();
+					break;
+					case "magic":
+						object.baseMagic += amount;
+						object.updateStats();
+					break;
+					case "resist":
+						object.baseResist += amount;
+						object.updateStats();
+					break;
+					default:
+						alert("Error: Unknown stat \""+stat+".\" Please report this error by emailing adventure.awaits@gmail.com with \"increaseBase error\" in the subject line.");
+					break;
+					}
 				}
 				this.increaseCurrent = function(stat, amount) {
 					if (stat == "health") {
@@ -112,7 +137,6 @@
 							}
 						}
 					}
-					object.updateStats();
 				}
 				this.decreaseCurrent = function(stat, amount) {
 					if (stat == "health") {
@@ -134,16 +158,12 @@
 							object.currentStamina -= amount;
 						}
 					}
-					object.updateStats();
 				}
-				this.updateStats = function() {
-					var playerHealth = player.currentHealth / 10;
-					var playerMana = player.currentMana / 5;
-					var playerStamina = player.currentStamina / 5;
-					var stats = document.getElementById("stats");
-					stats.innerHTML = '<p align="center">'+player.entityName+'</p><div id="playerHealth" style="background-color: red; height: 1em; width: '+playerHealth.toString()+'em; text-align: center;">'+player.currentHealth+'/'+player.baseHealth+'</div>';
-					$('#stats').append('<div id="playerMana" style="background-color: blue; height: 1em; width: '+playerMana.toString()+'em; text-align: center;">'+player.currentMana+'/'+player.baseMana+'</div>');
-					$('#stats').append('<div id="player" style="background-color: green; height: 1em; width: '+playerStamina.toString()+'em; text-align: center;">'+player.currentStamina+'/'+player.baseStamina+'</div>');
+				this.render = function(x, y) {
+					$('#blank').append('<img id="'+object.entityName.toLowerCase()+'" class="entity" src="Resources/'+object.entityImage+'"/\>');
+					var entity = document.getElementById(object.entityName.toLowerCase());
+					entity.style.left = (x*2)-2+"em";
+					entity.style.top = (x*2)-2+"em";
 				}
 			}
 			function Map(backgroundImage, foregroundImage, width, height, onLoadHandler) {
@@ -283,109 +303,6 @@
 					alert("Error: Inventory \""+object.invName+"\" doesn't have any of the item \""+object.items[i].itemName+"\"!");
 				}
 			}
-			var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
-				mapOne.load();
-				currentMap = mapOne;
-				mapOne.addNotWalkable(10, 17);
-				mapOne.addNotWalkable(10, 18);
-				mapOne.addNotWalkable(11, 17);
-				mapOne.addNotWalkable(11, 18);
-				mapOne.addNotWalkable(12, 17);
-				mapOne.addNotWalkable(12, 18);
-				mapOne.addNotWalkable(13, 17);
-				mapOne.addNotWalkable(13, 18);
-				mapOne.addEvent(21, 15, function() {
-					mapTwo.onLoadHandler();
-					document.getElementById('player').style.left = "0";
-					document.getElementById('player').style.top = "36em";
-				});
-			});
-			currentMap = mapOne;
-			var mapTwo = new Map('2.png', '2Fore.png', 25, 25, function() {
-				mapTwo.load();
-				currentMap = mapTwo;
-				mapTwo.addNotWalkable(6, 8);
-				mapTwo.addNotWalkable(6, 9);
-				mapTwo.addNotWalkable(7, 8);
-				mapTwo.addNotWalkable(7, 9);
-				mapTwo.addNotWalkable(8, 8);
-				mapTwo.addNotWalkable(8, 9);
-				mapTwo.addNotWalkable(9, 8);
-				mapTwo.addNotWalkable(9, 9);
-				mapTwo.addNotWalkable(19, 20);
-				mapTwo.addNotWalkable(19, 21);
-				mapTwo.addNotWalkable(20, 20);
-				mapTwo.addNotWalkable(20, 21);
-				mapTwo.addNotWalkable(21, 20);
-				mapTwo.addNotWalkable(21, 21);
-				mapTwo.addNotWalkable(22, 20);
-				mapTwo.addNotWalkable(22, 21);
-				mapTwo.addEvent(0, 18, function() {
-					mapOne.onLoadHandler();
-					document.getElementById('player').style.left = "42em";
-					document.getElementById('player').style.top = "30em";
-				});
-			});
-			var inv = new Inventory("Inventory (Player)", 10, 25);
-			currentInv = inv;
-			var potion = {
-				use: function() {
-					player.increaseCurrent("health", 15);
-				}
-			};
-			var ether = {
-				use: function() {
-					player.increaseCurrent("mana", 5);
-				}
-			};
-			var honey = {
-				use: function() {
-					player.increaseCurrent("stamina", 10);
-				}
-			};
-			currentInv.addItem("Ether", 5, ether);
-			currentInv.addItem("Honey", 5, honey);
-			currentInv.addItem("Potion", 5, potion);
-			var saveMenu = new Menu("Save?", "gray", function(eventid) {
-				mainMenu.display();
-			});
-			saveMenu.addEntry("Yes", "entryYes");
-			saveMenu.addEntry("No", "entryNo");
-			var invMenu = new Menu("Inventory", "gray", function(eventId) {
-				if (eventId == "entryBack") {
-					mainMenu.display();
-					invMenu.entries = [];
-				}
-				if (eventId.substr(0, 9) == "entryItem") {
-					currentInv.useItem(eventId.substr(9, eventId.length), 1);
-					invMenu.entries = [];
-					for (var i = 0; i < currentInv.items.length; i++) {
-						invMenu.addEntry(currentInv.items[i].itemName+" x"+currentInv.items[i].amount, "entryItem"+currentInv.items[i].itemName);
-					}
-					invMenu.addEntry("Back", "entryBack");
-					invMenu.display();
-				}
-			});
-			var mainMenu = new Menu("Main", "gray", function(eventId) {
-				if ( eventId == "entryInventory" ) {
-					for (var i = 0; i < currentInv.items.length; i++)
-						invMenu.addEntry(currentInv.items[i].itemName+" x"+currentInv.items[i].amount, "entryItem"+currentInv.items[i].itemName);
-					invMenu.addEntry("Back", "entryBack");
-					invMenu.title = inv.invName;
-					invMenu.display();
-				}
-				if (eventId == "entrySave")
-					saveMenu.display();
-				if (eventId == "entryExit") {
-					emptyMenu.display("white", "white");
-					menuOpen = false;
-					currentMenu = null;
-				}
-			});
-			mainMenu.addEntry("Inventory", "entryInventory");
-			mainMenu.addEntry("Save", "entrySave");
-			mainMenu.addEntry("Exit", "entryExit");
-			var emptyMenu = new Menu("", "", function(eventId){});
 			function walkUp(distanceFromLeft, distanceFromTop) {
 				if (distanceFromTop - 2 < 0)
 					return;
@@ -442,16 +359,137 @@
 				currentMenu.clickFunction(event.target.id);
 			});
 			$(document).ready(function() {
-				currentMap.onLoadHandler();
 				var playerName;
 				var i = 0;
 				while (i == 0) {
-					playerName = prompt("What is your name?", "Player")
+					playerName = prompt("What is your name?", "Player");
 					if ( playerName != null )
 						i++
 				}
-				player = new Entity(50, 15, 25, playerName);
+				player = new Entity(50, 15, 25, 10, 5, 7, 2, playerName, "Player.png");
+				player.updateStats = function() {
+					var playerHealth = player.currentHealth / 10;
+					var playerMana = player.currentMana / 5;
+					var playerStamina = player.currentStamina / 5;
+					var stats = document.getElementById("stats");
+					stats.innerHTML = '<p align="center">'+player.entityName+'</p>';
+						$('#stats').append('<div id="playerHealth" style="background-color: red; height: 1em; width: '+playerHealth.toString()+'em; text-align: center;">'+player.currentHealth+'/'+player.baseHealth+'</div>');
+					$('#stats').append('<div id="playerMana" style="background-color: blue; height: 1em; width: '+playerMana.toString()+'em; text-align: center;">'+player.currentMana+'/'+player.baseMana+'</div>');
+					$('#stats').append('<div id="playerStamina" style="background-color: green; height: 1em; width: '+playerStamina.toString()+'em; text-align: center;">'+player.currentStamina+'/'+player.baseStamina+'</div>');
+					$('#stats').append('<p id="playerAttack" align="left">Attack: '+player.baseAttack+'</p>');
+					$('#stats').append('<p id="playerDefence" align="left">Defence: '+player.baseDefence+'</p>');
+					$('#stats').append('<p id="playerMagic" align="left">Magic Attack: '+player.baseMagic+'</p>');
+					$('#stats').append('<p id="playerResist" align="left">Magic Resist: '+player.baseResist+'</p>');
+				}
 				player.updateStats();
+				zombie = new Entity(35, 0, 15, 7, 3, 0, 0, "Zombie", "Zombie.png");
+				var mapOne = new Map('1.png', '1Fore.png', 22, 22, function() {
+					mapOne.load();
+					currentMap = mapOne;
+					mapOne.addNotWalkable(10, 17);
+					mapOne.addNotWalkable(10, 18);
+					mapOne.addNotWalkable(11, 17);
+					mapOne.addNotWalkable(11, 18);
+					mapOne.addNotWalkable(12, 17);
+					mapOne.addNotWalkable(12, 18);
+					mapOne.addNotWalkable(13, 17);
+					mapOne.addNotWalkable(13, 18);
+					mapOne.addEvent(21, 15, function() {
+						mapTwo.onLoadHandler();
+						document.getElementById('player').style.left = "0";
+						document.getElementById('player').style.top = "36em";
+					});
+				});
+				currentMap = mapOne;
+				currentMap.onLoadHandler();
+				var mapTwo = new Map('2.png', '2Fore.png', 25, 25, function() {
+					mapTwo.load();
+					currentMap = mapTwo;
+					mapTwo.addNotWalkable(6, 8);
+					mapTwo.addNotWalkable(6, 9);
+					mapTwo.addNotWalkable(7, 8);
+					mapTwo.addNotWalkable(7, 9);
+					mapTwo.addNotWalkable(8, 8);
+					mapTwo.addNotWalkable(8, 9);
+					mapTwo.addNotWalkable(9, 8);
+					mapTwo.addNotWalkable(9, 9);
+					mapTwo.addNotWalkable(19, 20);
+					mapTwo.addNotWalkable(19, 21);
+					mapTwo.addNotWalkable(20, 20);
+					mapTwo.addNotWalkable(20, 21);
+					mapTwo.addNotWalkable(21, 20);
+					mapTwo.addNotWalkable(21, 21);
+					mapTwo.addNotWalkable(22, 20);
+					mapTwo.addNotWalkable(22, 21);
+					mapTwo.addEvent(0, 18, function() {
+						mapOne.onLoadHandler();
+						document.getElementById('player').style.left = "42em";
+						document.getElementById('player').style.top = "30em";
+					});
+				});
+				var inv = new Inventory("Inventory (Player)", 10, 25);
+				currentInv = inv;
+				var potion = {
+					use: function() {
+						player.increaseCurrent("health", 15);
+						player.updateStats();
+					}
+				};
+				var ether = {
+					use: function() {
+						player.increaseCurrent("mana", 5);
+						player.updateStats();
+					}
+				};
+				var honey = {
+					use: function() {
+						player.increaseCurrent("stamina", 10);
+						player.updateStats();
+					}
+				};
+				currentInv.addItem("Ether", 5, ether);
+				currentInv.addItem("Honey", 5, honey);
+				currentInv.addItem("Potion", 5, potion);
+				var saveMenu = new Menu("Save?", "gray", function(eventid) {
+					mainMenu.display();
+				});
+				saveMenu.addEntry("Yes", "entryYes");
+				saveMenu.addEntry("No", "entryNo");
+				var invMenu = new Menu("Inventory", "gray", function(eventId) {
+					if (eventId == "entryBack") {
+						mainMenu.display();
+						invMenu.entries = [];
+					}
+					if (eventId.substr(0, 9) == "entryItem") {
+						currentInv.useItem(eventId.substr(9, eventId.length), 1);
+						invMenu.entries = [];
+						for (var i = 0; i < currentInv.items.length; i++) {
+							invMenu.addEntry(currentInv.items[i].itemName+" x"+currentInv.items[i].amount, "entryItem"+currentInv.items[i].itemName);
+						}
+						invMenu.addEntry("Back", "entryBack");
+						invMenu.display();
+					}
+				});
+				var mainMenu = new Menu("Main", "gray", function(eventId) {
+					if ( eventId == "entryInventory" ) {
+						for (var i = 0; i < currentInv.items.length; i++)
+							invMenu.addEntry(currentInv.items[i].itemName+" x"+currentInv.items[i].amount, "entryItem"+currentInv.items[i].itemName);
+						invMenu.addEntry("Back", "entryBack");
+						invMenu.title = inv.invName;
+						invMenu.display();
+					}
+					if (eventId == "entrySave")
+						saveMenu.display();
+					if (eventId == "entryExit") {
+						emptyMenu.display("white", "white");
+						menuOpen = false;
+						currentMenu = null;
+					}
+				});
+				mainMenu.addEntry("Inventory", "entryInventory");
+				mainMenu.addEntry("Save", "entrySave");
+				mainMenu.addEntry("Exit", "entryExit");
+				var emptyMenu = new Menu("", "", function(eventId){});
 				$(document).keyup(function(key) {
 					// If menus are open, then movement is locked
 					if (menuOpen == false) {
